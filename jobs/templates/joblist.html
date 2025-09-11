@@ -1,0 +1,83 @@
+{% extends 'index.html' %} 
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<header class="site-header">
+  <div class="section-overlay"></div>
+
+  <div class="container">
+      <div class="row">
+          
+          <div class="col-lg-12 col-12 text-center">
+              <h1 class="text-white">Jobs Applied</h1>
+
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb justify-content-center">
+                      <li class="breadcrumb-item"><a href="/">Home</a></li>
+
+                      <li class="breadcrumb-item active" aria-current="page">Jobs Applied</li>
+                  </ol>
+              </nav>
+          </div>
+
+      </div>
+  </div>
+</header>
+
+  <div Style="width:50%;margin:auto;margin-top:20px;margin-bottom:20px">
+  <form method="get" action="{% url 'joblist' %}">
+    <div class="row justify-content-center">
+      <div class="col-md-4 mb-3">
+        <label for="start_date" class="form-label">From:</label>
+        <input type="date" class="form-control" id="start_date" name="start_date">
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label for="end_date" class="form-label">To:</label>
+        <input type="date" class="form-control" id="end_date" name="end_date">
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <button type="submit" class="btn btn-primary mt-4">Filter</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover mt-4">
+      <thead class="bg-primary text-white">
+        <tr>
+          <th>Date</th>
+          <th>Job Title</th>
+          <th>Location</th>
+          <th>Industry</th>
+        </tr>
+      </thead>
+
+        <tbody>
+            {% for job in object_list %}
+            <tr class="border-b dark:border-neutral-500">
+              <td class="px-4 py-2">
+                {{ job.applied|date:"h:i A | d F,  Y " }}
+              </td>
+              <td class="px-4 py-2">
+                {{ job.job.title }}
+              </td>
+              <td class="px-4 py-2 text-border">{{ job.job.location }}
+                </span>
+              </td>
+              <td class="px-4 py-2">
+    {{ job.job.industry}}
+              </td>
+              
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+   
+    </table>
+  </div>
+</div>
+
+{% endblock %}

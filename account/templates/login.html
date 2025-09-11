@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="site-header">
+    <div class="section-overlay"></div>
+
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-lg-12 col-12 text-center">
+                <h1 class="text-white">Login Page</h1>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="{% url "registration" %}">Registration</a></li>
+
+                        <li class="breadcrumb-item active" aria-current="page">Login</li>
+                    </ol>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</header>
+     
+    <div class="col-lg-4 col-4 mx-auto">
+        <form class="custom-form contact-form" action="#" method="post" role="form">
+
+            <div class="row">
+                {% csrf_token %}
+             {{form|crispy}}
+                
+ <!-- Remember Me -->
+ <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="remember_me">
+    <label class="form-check-label" for="remember_me" style="color: #333;">
+        Remember Me
+    </label>
+</div>
+  <!-- Forgot Password Link -->
+  <p style="text-align: center;"><a href="#" style="color: #007bff; text-decoration: none;">Forgot Password?</a></p>
+                <div class="col-lg-4 col-md-4 col-6 mx-auto mb-2">
+                    <button type="submit" class="form-control">Login</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

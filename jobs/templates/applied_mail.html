@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .resume {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #555;
+        }
+        p {
+            color: #777;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume">
+        <h2>Job Application</h2>
+        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        <p><strong>Career Objective:</strong> {{ seeker.CareerObjective }}</p>
+        <hr>
+        <h3>Skills</h3>
+        <ul>
+            {% for skill in seeker.skills.all %}
+            <li>{{ skill.name }}</li>
+        {% endfor %}
+        </ul>
+        <hr>
+        <h3>Projects</h3>
+        <p>{{ seeker.projects_name }}</p>
+        <hr>
+        <h3>Experience</h3>
+        <p>{{ seeker.Experience }}</p>
+        <hr>
+        <h3>About Me</h3>
+        <p>{{ seeker.about_me }}</p>
+        <hr>
+        <h3>Contact</h3>
+        <p>{{ seeker.Contact }}</p>
+        <hr>
+        <h3>Github Link</h3>
+        <p><a href="{{ seeker.github_link }}">{{ seeker.github_link }}</a></p>
+        <hr>
+        <h3>Other Links</h3>
+        <p>{{ seeker.others_link }}</p>
+        <hr>
+        <a href="mailto:{{ seeker.user.email }}" class="btn">Call for Interview</a>
+        <hr>
+        <p>Thanks for considering my application.</p>
+        <p>Sincerely,</p>
+        <p>{{ user.first_name }} {{ user.last_name }}</p>
+    </div>
+</body>
+</html>

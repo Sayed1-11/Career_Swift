@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #ff5500;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #ff2600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Welcome!</h3>
+        <p>Thank you for creating an account on our platform.</p>
+        <p>To activate your account, please click the button below:</p>
+        
+        <a href="{{ confirm_link }}" class="button" target="_blank" style="color:#fff">Activate Account</a>
+
+        <p>If the button above does not work, you can also <a href="{{ confirm_link }}" target="_blank">click here</a> or copy and paste the following link into your browser:</p>
+        <p>{{ confirm_link }}</p>
+
+        <h3>CareerSwift</h3>
+    </div>
+</body>
+</html>

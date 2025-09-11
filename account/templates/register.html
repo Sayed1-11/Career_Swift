@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="site-header">
+    <div class="section-overlay"></div>
+
+    <div class="container">
+        <div class="row">
+            
+            <div class="col-lg-12 col-12 text-center">
+                <h1 class="text-white">Registration Page</h1>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="{% url "login" %}">Login</a></li>
+
+                        <li class="breadcrumb-item active" aria-current="page">Register</li>
+                    </ol>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<div class="col-lg-4 col-4 mx-auto">
+    <form class="custom-form contact-form" action="#" method="post" role="form">    
+        <div class="row">
+        {% csrf_token %}
+        {{form|crispy}}
+        
+        <!-- Error Messages -->
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="col-lg-6 col-md-6 col-6 mx-auto mb-2">
+            <button type="submit" class="form-control">Register</button>
+        </div>
+    </form>
+</div>
+    <!-- Success Message -->
+    {% if request.GET.success %}
+        <div class="alert alert-success" role="alert" style="text-align: center;">
+            Registration successful! You can now log in.
+        </div>
+    {% endif %}
+</div>
+
+    
+
+{% endblock content %}
