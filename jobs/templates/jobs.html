@@ -1,39 +1,202 @@
-{% extends "index.html" %}
+{% extends 'index.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<header class="site-header">
-  <div class="section-overlay"></div>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+    :root {
+        --dash-primary: #6366f1;
+        --dash-secondary: #4f46e5;
+        --dash-accent: #f59e0b;
+        --dash-bg: #f8fafc;
+        --dash-card-bg: #ffffff;
+        --dash-text: #1e293b;
+        --dash-text-muted: #64748b;
+    }
 
-  <div class="container">
-      <div class="row">
-          
-          <div class="col-lg-12 col-12 text-center">
-              <h1 class="text-white">Post Jobs</h1>
+    body {
+        background-color: var(--dash-bg);
+    }
 
-              <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb justify-content-center">
-                      <li class="breadcrumb-item"><a href="/">Home</a></li>
+    .dashboard-container {
+        padding: 40px 0;
+        min-height: 100vh;
+    }
 
-                      <li class="breadcrumb-item active" aria-current="page">Post job</li>
-                  </ol>
-              </nav>
-          </div>
+    .dash-card {
+        background: var(--dash-card-bg);
+        border-radius: 20px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
 
-      </div>
-  </div>
-</header>
-<div>
-  <div class="col-lg-8 col-6 mx-auto">
-<form class="custom-form contact-form" action="#" method="post" role="form" method='post'>
+    .dash-card-header {
+        padding: 24px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        color: var(--dash-text-muted);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
 
-  <form >
-{% csrf_token %}    
-{{form|crispy}}
+    .sidebar-link:hover, .sidebar-link.active {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--dash-primary);
+    }
 
-<div class="col-lg-4 col-md-4 col-4 mx-auto mb-2">
-  <button type="submit" class="form-control">Post</button>
-</div>   
+    .btn-dash-primary {
+        background: var(--dash-primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-dash-primary:hover {
+        background: var(--dash-secondary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    }
+
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dash-text);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--dash-bg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .custom-form .form-control:focus {
+        border-color: var(--dash-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .bg-primary-soft { background-color: rgba(99, 102, 241, 0.1); color: var(--dash-primary); }
+
+</style>
+
+<div class="dashboard-container">
+    <div class="container-fluid px-lg-5">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 mb-4 d-none d-lg-block">
+                <div class="dash-card p-3">
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        {% if employee.Company_Logo %}
+                            <img src="{{ employee.Company_Logo.url }}" class="rounded-3 mb-2" style="width: 80px; height: 80px; object-fit: contain;">
+                        {% else %}
+                            <div class="bg-primary-soft rounded-3 d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                                <i class="fas fa-building fa-2x"></i>
+                            </div>
+                        {% endif %}
+                        <h6 class="fw-bold mb-0 text-truncate">{{ employee.company_name }}</h6>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                    
+                    <nav class="d-flex flex-column gap-2">
+                        <a href="{% url 'employee_dashboard' %}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Overview</a>
+                        <a href="{% url 'jobs' %}" class="sidebar-link active"><i class="fas fa-plus-circle"></i> Post a Job</a>
+                        <a href="{% url 'jobdetails' %}" class="sidebar-link"><i class="fas fa-briefcase"></i> My Jobs</a>
+                        <a href="{% url 'employee_applications' %}" class="sidebar-link"><i class="fas fa-user-tie"></i> Applications</a>
+                        <a href="{% url 'employee_settings' %}" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
+                        <hr class="my-2">
+                        <a href="{% url 'Logout' %}" class="sidebar-link text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10">
+                <div class="row justify-content-center">
+                    <div class="col-xl-9">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-down">
+                            <div>
+                                <h2 class="fw-bold mb-1">Post a New Job</h2>
+                                <p class="text-muted mb-0">Fill in the details below to find your next great hire.</p>
+                            </div>
+                            <a href="{% url 'employee_dashboard' %}" class="btn btn-light rounded-pill px-4 fw-bold">
+                                <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                            </a>
+                        </div>
+
+                        <!-- Form Card -->
+                        <div class="dash-card overflow-visible" data-aos="fade-up" data-aos-delay="100">
+                            <div class="dash-card-header bg-white">
+                                <h5 class="fw-bold mb-0"><i class="fas fa-file-alt text-primary me-2"></i> Job Details & Specifics</h5>
+                            </div>
+                            
+                            <div class="p-4 p-md-5">
+                                <form method="post" class="custom-form">
+                                    {% csrf_token %}
+                                    
+                                    {% if form.errors %}
+                                        <div class="alert alert-danger rounded-4 mb-4 border-0 shadow-sm">
+                                            <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i> Please correct the following errors:</h6>
+                                            <ul class="mb-0 small">
+                                                {% for field, errors in form.errors.items %}
+                                                    {% for error in errors %}
+                                                        <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="row g-4">
+                                        <!-- Form Fields -->
+                                        <div class="col-12">
+                                            {{ form|crispy }}
+                                        </div>
+
+                                        <div class="col-12 mt-5 text-end">
+                                            <hr class="mb-4">
+                                            <button type="button" class="btn btn-light px-4 py-3 rounded-pill fw-bold me-2" onclick="window.history.back()">Cancel</button>
+                                            <button type="submit" class="btn btn-dash-primary px-5 py-3 rounded-pill fw-bold shadow-sm">
+                                                Publish Job Opportunity <i class="fas fa-rocket ms-2"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Scripts for Animations -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 50
+        });
+    });
+</script>
 {% endblock content %}

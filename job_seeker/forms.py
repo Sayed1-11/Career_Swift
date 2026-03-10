@@ -24,3 +24,14 @@ class JobSeekerForm(forms.ModelForm):
                 raise ValidationError("File size must be less than 5MB.")
         
         return resume
+
+class JobSeekerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Job_seeker
+        fields = ['profile_picture']
+        widgets = {
+            'profile_picture': forms.FileInput(attrs={
+                'accept': 'image/*',
+                'class': 'form-control'
+            })
+        }

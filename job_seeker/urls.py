@@ -5,6 +5,5 @@ from . import views
 
 urlpatterns = [
     path('seeker/create/', views.SeekerCreateView.as_view(), name='seeker'),
-    path('seeker/<int:pk>/update/', views.SeekerUpdateView.as_view(), name='seeker_update')
-    
+    path('seeker/resume/delete/', views.delete_resume, name='delete_resume')
 ]

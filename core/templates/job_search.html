@@ -1,0 +1,217 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Search Header -->
+<div class="bg-white border-bottom py-3 sticky-top" style="top: 76px; z-index: 1020; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div class="container">
+        <form class="row g-3 align-items-center" action="#" method="get">
+            <div class="col-lg-5 col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted border-0 rounded-start-pill ps-4"><i class="fas fa-search"></i></span>
+                    <input type="text" name="job-title" class="form-control bg-light border-start-0 ps-2 border-0" placeholder="Search jobs, skills, companies..." value="{{ search_query.job_title }}" style="box-shadow: none;">
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted border-0 ps-4"><i class="fas fa-map-marker-alt"></i></span>
+                    <input type="text" name="job-location" class="form-control bg-light border-start-0 ps-2 border-0 rounded-end-pill me-2" placeholder="Location" value="{{ search_query.job_location }}" style="box-shadow: none;">
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3">
+                <button type="submit" class="btn btn-primary w-100 fw-bold rounded-pill py-2"><i class="fas fa-search me-2"></i>Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="py-5" style="background-color: var(--atb-bg-light); min-height: 80vh;">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Filters -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="bg-white rounded-3 shadow-sm border p-4 mb-4" style="border-color: #f1f5f9 !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                        <h5 class="fw-bold text-dark mb-0 fs-5" style="color: var(--atb-blue-primary) !important;">Filter By</h5>
+                        <a href="{% url 'find_jobs' %}" class="text-primary text-decoration-none small fw-bold">Clear All</a>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center cursor-pointer text-dark">
+                            Category <i class="fas fa-chevron-up text-muted small"></i>
+                        </h6>
+                        <ul class="list-unstyled mb-0 ms-1">
+                            {% for cat in industry %}
+                            <li class="mb-3">
+                                <a href="{% url 'find_jobs' %}?category={{ cat.slug }}" class="text-decoration-none text-muted d-flex align-items-center category-link" style="transition: color 0.2s;">
+                                    <i class="far fa-square me-3 text-muted" style="font-size: 1.1rem;"></i> <span style="font-size: 0.95rem;">{{ cat.name }}</span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="mt-3">
+                            <a href="#" class="text-primary fw-bold text-decoration-none small">View More</a>
+                        </div>
+                    </div>
+
+                    <!-- Additional Filters -->
+                    <div class="mb-4 border-top pt-4">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center text-dark">
+                            Experience <i class="fas fa-chevron-up text-muted small"></i>
+                        </h6>
+                        <div class="d-flex justify-content-between text-muted small mb-2 fw-medium">
+                            <span>1 yr</span>
+                            <span>20+ yrs</span>
+                        </div>
+                        <input type="range" class="form-range" min="1" max="20" id="experienceRange" style="accent-color: var(--atb-blue-primary);">
+                    </div>
+
+                    <div class="border-top pt-4">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center text-dark">
+                            Salary <i class="fas fa-chevron-up text-muted small"></i>
+                        </h6>
+                        <div class="d-flex justify-content-between text-muted small mb-2 fw-medium">
+                            <span>0k</span>
+                            <span>500k+</span>
+                        </div>
+                        <input type="range" class="form-range" min="0" max="500" id="salaryRange" style="accent-color: var(--atb-blue-primary);">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Results List -->
+            <div class="col-lg-9 col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-primary mb-0 fs-4">{{ data.paginator.count|default:"0" }} Jobs</h4>
+                    
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-primary text-white px-3 py-2 rounded-pill fw-medium d-flex align-items-center"><i class="fas fa-check me-2"></i> High Salary</span>
+                        <span class="badge bg-white text-dark border px-3 py-2 rounded-pill fw-medium d-flex align-items-center"><i class="fas fa-dollar-sign text-muted me-2"></i> Salary</span>
+                        <span class="badge bg-white text-dark border px-3 py-2 rounded-pill fw-medium d-flex align-items-center"><i class="far fa-star text-muted me-2"></i> New</span>
+                    </div>
+                </div>
+
+                {% if search_query.job_title or search_query.job_location %}
+                <div class="mb-4 d-flex align-items-center gap-2">
+                    <span class="fw-bold text-primary fs-6">Filters Applied:</span>
+                    {% if search_query.job_title %}
+                    <span class="badge bg-white border border-secondary text-dark px-3 py-2 rounded-pill shadow-sm d-flex align-items-center fw-normal">
+                        {{ search_query.job_title }} <a href="{% url 'find_jobs' %}" class="text-muted ms-2"><i class="fas fa-times-circle bg-light rounded-circle text-secondary"></i></a>
+                    </span>
+                    {% endif %}
+                    {% if search_query.job_location %}
+                    <span class="badge bg-white border border-secondary text-dark px-3 py-2 rounded-pill shadow-sm d-flex align-items-center fw-normal">
+                        {{ search_query.job_location }} <a href="{% url 'find_jobs' %}" class="text-muted ms-2"><i class="fas fa-times-circle bg-light rounded-circle text-secondary"></i></a>
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="row g-4">
+                    {% for job in data %}
+                    <div class="col-12">
+                        <div class="bg-white rounded-3 p-4 shadow-sm border mt-1 position-relative job-list-card" style="border-color: #e2e8f0 !important;">
+                            <div class="position-absolute top-0 end-0 mt-4 me-4 d-flex gap-2">
+                                {% if job.id in applied_job_ids %}
+                                    <span class="badge bg-success text-white rounded-pill px-3 py-2 fw-semibold border border-success border-opacity-25"><i class="fas fa-check-circle me-1"></i>Applied</span>
+                                {% endif %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-semibold border border-primary border-opacity-25">{{ job.Job_type }}</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0 bg-white shadow-sm rounded-3 p-2 me-4 border" style="width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-color: #f1f5f9 !important;">
+                                    {% if job.posted_by.Company_Logo %}
+                                    <img src="{{ job.posted_by.Company_Logo.url }}" class="img-fluid" style="max-height: 45px; object-fit: contain;" alt="{{ job.posted_by.company_name }}">
+                                    {% else %}
+                                    <i class="fas fa-building text-primary fa-2x opacity-50"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <a href="{% url 'details' job.pk %}" class="text-dark text-decoration-none fs-5 fw-bold job-title-hover d-block mb-1">{{ job.title }}</a>
+                                    <div class="text-muted small fs-6">{{ job.posted_by.company_name }}</div>
+                                </div>
+                            </div>
+
+                            <div class="fw-bold text-dark fs-5 mt-4 mb-4 ps-2 border-start border-4 border-primary">
+                                &nbsp; ৳ {{ job.salary }} <span class="text-muted small fw-normal">/Monthly</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 text-muted border-top pt-3">
+                                <div class="d-flex align-items-center text-success small fw-semibold">
+                                    <span class="d-inline-block rounded-circle bg-success me-2 shadow-sm" style="width: 10px; height: 10px;"></span> HR Active: 14h ago
+                                </div>
+                                
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="small me-3"><i class="far fa-clock me-1"></i> Deadline: 2026-03-31</span>
+                                    <button class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 bg-light" style="width: 35px; height: 35px;"><i class="far fa-heart"></i></button>
+                                    <button class="btn btn-outline-secondary btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 bg-light me-2" style="width: 35px; height: 35px;"><i class="far fa-thumbs-up"></i></button>
+                                    <a href="{% url 'details' job.pk %}" class="btn btn-primary btn-sm px-4 rounded-pill fw-bold shadow-sm py-2" style="background-color: var(--atb-blue-dark); border-color: var(--atb-blue-dark);">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5 bg-white rounded-3 shadow-sm border mt-0" style="border-color: #e2e8f0 !important;">
+                        <i class="fas fa-search fa-4x text-muted mb-4 opacity-25"></i>
+                        <h4 class="fw-bold text-dark">No jobs found matching your criteria</h4>
+                        <p class="text-muted mx-auto" style="max-width: 400px;">Try adjusting your search keywords, clear the location filter, or browse different categories to see more results.</p>
+                        <a href="{% url 'find_jobs' %}" class="btn btn-primary px-4 py-2 mt-2 rounded-pill fw-bold">Clear Filters</a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if data.has_other_pages %}
+                <div class="d-flex justify-content-center mt-5 mb-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination gap-2 shadow-sm p-2 bg-white rounded-pill border">
+                            {% if data.has_previous %}
+                            <li class="page-item"><a class="page-link border-0 text-dark fw-bold rounded-pill px-3" href="?page={{ data.previous_page_number }}" style="background: transparent;"><i class="fas fa-chevron-left me-1 small"></i> Prev</a></li>
+                            {% endif %}
+                            
+                            {% for i in data.paginator.page_range %}
+                            <li class="page-item {% if data.number == i %}active{% endif %}">
+                                <a class="page-link border-0 {% if data.number == i %}bg-primary text-white shadow-sm{% else %}text-muted{% endif %} rounded-circle" href="?page={{ i }}" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: 600;">{{ i }}</a>
+                            </li>
+                            {% endfor %}
+                            
+                            {% if data.has_next %}
+                            <li class="page-item"><a class="page-link border-0 text-dark fw-bold rounded-pill px-3" href="?page={{ data.next_page_number }}" style="background: transparent;">Next <i class="fas fa-chevron-right ms-1 small"></i></a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .job-list-card {
+        transition: all 0.2s ease-in-out;
+    }
+    .job-list-card:hover {
+        border-color: var(--atb-blue-primary) !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+        transform: translateY(-2px);
+    }
+    .job-title-hover {
+        transition: color 0.15s ease-in-out;
+    }
+    .job-title-hover:hover {
+        color: var(--atb-blue-primary) !important;
+    }
+    .category-link {
+        color: var(--atb-grey-muted) !important;
+    }
+    .category-link:hover, .category-link:hover i {
+        color: var(--atb-blue-primary) !important;
+        font-weight: 500;
+    }
+    body {
+        background-color: #f8fafc; /* Soft background contrasting white cards */
+    }
+</style>
+{% endblock content %}

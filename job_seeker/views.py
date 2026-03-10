@@ -26,3 +26,14 @@ class SeekerUpdateView(UpdateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def delete_resume(request):
+    if request.method == 'POST':
+        job_seeker = get_object_or_404(Job_seeker, user=request.user)
+        if job_seeker.Resume:
+            job_seeker.Resume.delete()
+            messages.success(request, "Resume deleted successfully.")
+        return redirect('profile')
+    return redirect('profile')

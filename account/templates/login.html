@@ -1,50 +1,70 @@
 {% extends "index.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<header class="site-header">
-    <div class="section-overlay"></div>
-
-    <div class="container">
-        <div class="row">
-            
-            <div class="col-lg-12 col-12 text-center">
-                <h1 class="text-white">Login Page</h1>
-
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="{% url "registration" %}">Registration</a></li>
-
-                        <li class="breadcrumb-item active" aria-current="page">Login</li>
-                    </ol>
-                </nav>
-            </div>
-
-        </div>
+<header class="inner-page-header py-5" style="background-color: var(--atb-blue-dark);">
+    <div class="container py-4 text-center">
+        <h1 class="text-white fw-bold mb-3">Welcome <span class="text-primary">Back</span></h1>
+        <p class="text-white opacity-75">Log in to your account to continue your professional journey.</p>
     </div>
 </header>
-     
-    <div class="col-lg-4 col-4 mx-auto">
-        <form class="custom-form contact-form" action="#" method="post" role="form">
 
-            <div class="row">
-                {% csrf_token %}
-             {{form|crispy}}
+<section class="login-section py-5 bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 col-12">
+                <div class="auth-card bg-white p-5 rounded-4 shadow-sm border">
+                    <div class="text-center mb-5">
+                        <div class="auth-icon bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user-lock text-primary fa-2x"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark">Member Login</h3>
+                        <p class="text-muted small">Access your dashboard and manage applications</p>
+                    </div>
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            {{ form|crispy }}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const usernameLabel = document.querySelector('label[for="id_username"]');
+                                    if(usernameLabel) {
+                                        usernameLabel.innerHTML = 'Email Address<span class="asteriskField">*</span>';
+                                    }
+                                    const usernameInput = document.getElementById('id_username');
+                                    if(usernameInput) {
+                                        usernameInput.setAttribute('type', 'email');
+                                        usernameInput.setAttribute('placeholder', 'Enter your email address');
+                                    }
+                                });
+                            </script>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember_me">
+                                <label class="form-check-label small text-muted" for="remember_me">
+                                    Remember Me
+                                </label>
+                            </div>
+                            <a href="#" class="small text-primary text-decoration-none fw-bold">Forgot Password?</a>
+                        </div>
+
+                        <button type="submit" class="custom-btn w-100 py-3 mb-4">Login Now</button>
+
+                        <div class="text-center">
+                            <p class="text-muted small mb-0">Don't have an account? <a href="{% url 'registration' %}" class="text-primary fw-bold text-decoration-none">Create Account</a></p>
+                        </div>
+                    </form>
+                </div>
                 
- <!-- Remember Me -->
- <div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" id="remember_me">
-    <label class="form-check-label" for="remember_me" style="color: #333;">
-        Remember Me
-    </label>
-</div>
-  <!-- Forgot Password Link -->
-  <p style="text-align: center;"><a href="#" style="color: #007bff; text-decoration: none;">Forgot Password?</a></p>
-                <div class="col-lg-4 col-md-4 col-6 mx-auto mb-2">
-                    <button type="submit" class="form-control">Login</button>
+                <div class="text-center mt-5">
+                    <p class="text-muted small">By logging in, you agree to our <a href="#" class="text-dark text-decoration-underline">Terms of Service</a> and <a href="#" class="text-dark text-decoration-underline">Privacy Policy</a>.</p>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-
+</section>
 {% endblock content %}

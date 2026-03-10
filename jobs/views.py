@@ -41,13 +41,19 @@ class JobsView(LoginRequiredMixin, CreateView):
     form_class  = JobsForm
     success_url = reverse_lazy('home')
 
-    def form_valid(self, form):
-        try:
-            employee = get_object_or_404(Employee,user = self.request.user)
-        except:
-             messages.error(self.request,"You need to become a employee to post a job")
-             return redirect('employee')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['employee'] = Employee.objects.get(user=self.request.user)
+        return context
 
+    def dispatch(self, request, *args, **kwargs):
+        if not Employee.objects.filter(user=request.user).exists():
+            messages.error(request, "Only employers can post jobs. Please register as an employer.")
+            return redirect('employee_register')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        employee = get_object_or_404(Employee,user = self.request.user)
         form.instance.posted_by = employee
         subject = 'New Job Posted'
         template = 'job_post_notification.html' 
@@ -63,7 +69,7 @@ class JobsView(LoginRequiredMixin, CreateView):
                         template=template,
                         job=job
                     )
-            return super().form_valid(form)
+        return super().form_valid(form)
         
     
 class AppliedView(LoginRequiredMixin, FormView):
@@ -71,15 +77,17 @@ class AppliedView(LoginRequiredMixin, FormView):
     form_class = ApplicationForm
     success_url = reverse_lazy('home')
 
+    def dispatch(self, request, *args, **kwargs):
+        if Employee.objects.filter(user=request.user).exists():
+            messages.error(request, "Employers cannot apply for jobs.")
+            return redirect('home')
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         job_id = self.kwargs['job_id']
         job = get_object_or_404(Jobs, pk=job_id)
         letter = form.cleaned_data['letter']
-        try:
-            Seeker = get_object_or_404(Job_seeker, user=self.request.user)
-        except:
-             messages.error(self.request,"You need to become a job seeker to apply in this job")
-             return redirect('seeker')
+        Seeker, created = Job_seeker.objects.get_or_create(user=self.request.user)
         
         applied, created = JobApplication.objects.get_or_create(
                 job=job,
@@ -148,6 +156,12 @@ class jobsUpdate(LoginRequiredMixin,UpdateView):
     template_name = 'job_update.html'
     form_class = JobsForm
     success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        employee = get_object_or_404(Employee, user=self.request.user)
+        context['employee'] = employee
+        return context
 
     def form_valid(self, form):
         employee = get_object_or_404(Employee,user = self.request.user)

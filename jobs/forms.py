@@ -9,6 +9,11 @@ class JobsForm(forms.ModelForm):
         exclude= ['posted_by']
     def __init__(self,*args, **kwargs):
         super(JobsForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control rounded-3',
+                'placeholder': f'Enter {field.replace("_", " ")}'
+            })
 
 
 class ApplicationForm(forms.ModelForm):
